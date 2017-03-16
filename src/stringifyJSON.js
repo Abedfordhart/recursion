@@ -5,51 +5,50 @@
 
 var stringifyJSON = function(obj) {
   // your code goes here
-  var result = '';
-  var resultArray = [];
-  var resultObject = [];
-
   if(typeof obj === 'boolean' || typeof obj === 'number'){
-    result = obj.toString();
+    return obj.toString();
   }
 
   else if(obj === null){
-    result = 'null';
+    return '' + obj;
   }
 
   else if(typeof obj === 'string'){
-    result = '"' + obj + '"';
+    return '"' + obj + '"';
+  }
+
+  else if(typeof obj === 'undefined' || obj instanceof Function){
+    return '';
   }
 
   else if(Array.isArray(obj)){
+    var resultArray = [];
+    
     if(obj.length === 0){
-      result = '[]';
+      return '[]';
     }else{
       for(var i = 0; i < obj.length; i++){
         resultArray.push(stringifyJSON(obj[i]));
       }
+    return '[' + resultArray + ']';
     }
-    return "[" + resultArray + "]";
   }
 
-  else if(obj instanceof Object){
-    for(var key in obj){
-      if(typeof obj[key] === undefined || obj[key] instanceof Function){
-        resultObject.push('{}');
-      }else if(typeof obj[key] === 'boolean' || typeof obj[key] === 'number'){
-        resultObject.push('"' + key + '"' + ':' + obj[key]);
-      }else if(obj[key] === null){
-        resultObject.push('"' + key + '"' + ':' + obj[key]);
-      }else if(typeof obj === 'string'){
-        resultObject.push('"' + key + '"' + ':' + '"' + obj[key] + '"');
-      }else if(obj instanceof Object){
-        resultObject.push('"' + key + '"' + ':' + stringifyJSON(obj[key]));
+  else if(typeof obj === 'object'){
+    var resultObject = [];
+
+    if(Object.keys(obj).length === 0){
+      return '{}';
+    }else{
+      for(var key in obj){
+        if(obj[key] !== undefined && typeof obj[key] !== 'function'){
+          resultObject.push(stringifyJSON(key) + ':' + stringifyJSON(obj[key]))
+        }
       }
+      return '{' + resultObject + '}';
     }
-    return '{' + resultObject + '}';
   }
 
-  return result;
 };
 
-console.log(stringifyJSON([1,2,3]));
+// console.log(stringifyJSON([1,2,3]));
